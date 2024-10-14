@@ -1,35 +1,54 @@
 pipeline {
-agent any
-stages {
-stage('Clone Repository') {
-steps {
-git 'https://github.com/yourusername/nodejs-app.git'
-}
-}
-stage('Build Docker Image') {
-steps {
-script {
-docker.build('nodejs-app')
-}
-}
-}
-stage('Test') {
-steps {
-sh 'echo "Running tests..."'
-// Add real test commands later
-}
-}
-stage('Deploy') {
-steps {
-sshagent(['your-ssh-key-id']) {
-sh '''
-scp -o StrictHostKeyChecking=no docker-compose.yml ubuntu@your-
-ec2-ip:/home/ubuntu/
-ssh -o StrictHostKeyChecking=no ubuntu@your-ec2-ip "docker-
-compose -f /home/ubuntu/docker-compose.yml up -d"
-'''
-}
-}
-}
-}
+    agent any
+    environment {
+        // Declare dockerImage variable globally so it can be accessed in multiple stages
+        dockerImage = ''
+    }
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/sivanesh-dsp/guvi-capstone-nodejs.git'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build('docker.pkg.github.com/sivanesh-dsp/guvi-capstone-nodejs/nodejs-app')
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'echo "Running tests..."'
+                // Add real test commands later
+            }
+        }
+        stage('Push Docker Image to GitHub Packages') {
+            steps {
+                script {
+                    
+                    // Log in to GitHub Packages using Docker
+                    withCredentials([string(credentialsId: 'github-token-id', variable: 'GITHUB_TOKEN')]) {
+                        sh 'docker login docker.pkg.github.com -u sivanesh-dsp -p $GITHUB_TOKEN'
+                        
+                        // Tag the Docker image with GitHub Packages URL
+                        dockerImage.tag("latest")
+                        
+                        // Push the Docker image to GitHub Packages
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sshagent(['ssh-key']) {
+                    sh '''
+                    scp -o StrictHostKeyChecking=no docker-compose.yml ubuntu@ip-172-31-0-23:/home/ubuntu/
+                    ssh -o StrictHostKeyChecking=no ubuntu@ip-172-31-0-23 "sudo docker compose -f /home/ubuntu/docker-compose.yml up -d"
+                    '''
+                }
+            }
+        }
+    }
 }
