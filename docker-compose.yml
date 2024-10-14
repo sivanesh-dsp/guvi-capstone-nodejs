@@ -2,6 +2,6 @@ container.
 version: '3'
 services:
 web:
-image: nodejs-app
+image: ghcr.io/sivanesh-dsp/guvi-capstone-nodejs/nodejs-app
 ports:
 - "80:3000"
