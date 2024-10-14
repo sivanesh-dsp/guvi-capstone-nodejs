@@ -1,0 +1,7 @@
+container.
+version: '3'
+services:
+web:
+image: nodejs-app
+ports:
+- "80:3000"
