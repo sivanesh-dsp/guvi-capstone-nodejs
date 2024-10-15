@@ -1,11 +1,12 @@
 pipeline {
     agent any
-    parameters {
-        string(name: 'DEPLOY_IP', description: 'IP address for deployment')
-    }
+    // parameters {
+    //     string(name: 'DEPLOY_IP', description: 'IP address for deployment')
+    // }
     environment {
         // Declare dockerImage variable globally so it can be accessed in multiple stages
         dockerImage = ''
+        DEPLOY_IP = 'ip-172-31-7-142'
     }
     stages {
         stage('Clone Repository') {
