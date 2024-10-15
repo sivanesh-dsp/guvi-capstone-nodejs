@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    parameters {
+        string(name: 'DEPLOY_IP', description: 'IP address for deployment')
+    }
     environment {
         // Declare dockerImage variable globally so it can be accessed in multiple stages
         dockerImage = ''
@@ -44,8 +47,8 @@ pipeline {
             steps {
                 sshagent(['ssh-key']) {
                     sh '''
-                    scp -o StrictHostKeyChecking=no docker-compose.yml ubuntu@ip-172-31-0-23:/home/ubuntu/
-                    ssh -o StrictHostKeyChecking=no ubuntu@ip-172-31-0-23 "sudo docker compose -f /home/ubuntu/docker-compose.yml up -d"
+                    scp -o StrictHostKeyChecking=no docker-compose.yml ubuntu@${DEPLOY_IP}:/home/ubuntu/
+                    ssh -o StrictHostKeyChecking=no ubuntu@${DEPLOY_IP} "sudo docker compose -f /home/ubuntu/docker-compose.yml up -d"
                     '''
                 }
             }
