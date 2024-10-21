@@ -17,7 +17,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build('docker.pkg.github.com/sivanesh-dsp/guvi-capstone-nodejs/nodejs-app')
+                    dockerImage = docker.build('sivaneshdsp/capstone-guvi')
                 }
             }
         }
@@ -36,10 +36,10 @@ pipeline {
                         sh 'docker login docker.pkg.github.com -u sivanesh-dsp -p $GITHUB_TOKEN'
                         
                         // Tag the Docker image with GitHub Packages URL
-                        dockerImage.tag("sivanesh")
+                        dockerImage.tag("latest")
                         
                         // Push the Docker image to GitHub Packages
-                        dockerImage.push("sivanesh")
+                        dockerImage.push("latest")
                     }
                 }
             }
