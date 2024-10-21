@@ -36,10 +36,10 @@ pipeline {
                         sh 'docker login docker.pkg.github.com -u sivanesh-dsp -p $GITHUB_TOKEN'
                         
                         // Tag the Docker image with GitHub Packages URL
-                        dockerImage.tag("latest")
+                        dockerImage.tag("sivanesh")
                         
                         // Push the Docker image to GitHub Packages
-                        dockerImage.push("latest")
+                        dockerImage.push("sivanesh")
                     }
                 }
             }
