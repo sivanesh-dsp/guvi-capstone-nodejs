@@ -32,8 +32,8 @@ pipeline {
                 script {
                     
                     // Log in to GitHub Packages using Docker
-                    withCredentials([string(credentialsId: 'github-token-id', variable: 'GITHUB_TOKEN')]) {
-                        sh 'docker login docker.pkg.github.com -u sivanesh-dsp -p $GITHUB_TOKEN'
+                    withCredentials([string(credentialsId: 'dockerhub-token', variable: 'TOKEN')]) {
+                        sh 'docker login  -u sivaneshdsp -p $TOKEN'
                         
                         // Tag the Docker image with GitHub Packages URL
                         dockerImage.tag("latest")
